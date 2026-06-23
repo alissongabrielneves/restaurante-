@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balcão Restaurante</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Balcão</h1>
+
+<label>Comanda</label>
+<select id="comanda"></select>
+
+<hr>
+
+<h2>Prato por Quilo</h2>
+
+<label>Peso (kg)</label>
+<input type="number" id="peso" step="0.001" placeholder="0.650">
+
+<label>Preço por Kg</label>
+<input type="number" id="precoKg" step="0.01" value="69.90">
+
+<button onclick="adicionarPrato()">
+Adicionar Prato
+</button>
+
+<hr>
+
+<h2>Bebidas</h2>
+
+<label>Produto</label>
+
+<select id="bebida">
+    <option value="Coca-Cola|6">Coca-Cola - R$ 6,00</option>
+    <option value="Guaraná|6">Guaraná - R$ 6,00</option>
+    <option value="Água|3">Água - R$ 3,00</option>
+    <option value="Suco|7">Suco - R$ 7,00</option>
+</select>
+
+<label>Quantidade</label>
+
+<input
+    type="number"
+    id="quantidadeBebida"
+    value="1"
+    min="1">
+
+<button onclick="adicionarBebida()">
+Adicionar Bebida
+</button>
+
+<hr>
+
+<h2>Itens da Comanda</h2>
+
+<div id="itens"></div>
+
+<h2 id="total">
+Total: R$ 0,00
+</h2>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

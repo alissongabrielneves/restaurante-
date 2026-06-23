@@ -1,0 +1,44 @@
+body{
+    margin:0;
+    padding:15px;
+    font-family:Arial,sans-serif;
+    background:#f0f0f0;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+h1,h2{
+    text-align:center;
+}
+
+input,
+select,
+button{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    margin-bottom:8px;
+    box-sizing:border-box;
+}
+
+button{
+    cursor:pointer;
+}
+
+.botoes-bebida{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.item{
+    padding:8px;
+    border-bottom:1px solid #ddd;
+}
