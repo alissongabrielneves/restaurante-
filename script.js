@@ -2,7 +2,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxfTKdfrzOyGyFslvjqbKzm
 
 let totalComanda = 0;
 
-// CARREGA COMANDAS E PRODUTOS
 window.onload = function () {
 
     carregarComandas();
@@ -14,8 +13,6 @@ window.onload = function () {
 function carregarComandas() {
 
     const select = document.getElementById("comanda");
-
-    if (!select) return;
 
     select.innerHTML = "";
 
@@ -44,13 +41,10 @@ async function carregarProdutos() {
         const select =
             document.getElementById("bebida");
 
-        if (!select) return;
-
         select.innerHTML = "";
 
         produtos.forEach(produto => {
 
-            // ignora cabeçalho
             if (
                 produto.produto === "Produto" ||
                 !produto.produto
@@ -63,7 +57,7 @@ async function carregarProdutos() {
                 `${produto.produto}|${produto.preco}`;
 
             option.textContent =
-                `${produto.produto} - R$ ${produto.preco}`;
+                `${produto.produto} - R$ ${Number(produto.preco).toFixed(2)}`;
 
             select.appendChild(option);
         });
@@ -76,14 +70,14 @@ async function carregarProdutos() {
     }
 }
 
-// ATUALIZA TELA
+// MOSTRA ITEM NA TELA
 function atualizarTela(produto, valor) {
 
     const itens =
         document.getElementById("itens");
 
     itens.innerHTML += `
-        <div class="item">
+        <div>
             ${produto} - R$ ${valor.toFixed(2)}
         </div>
     `;
@@ -94,70 +88,58 @@ function atualizarTela(produto, valor) {
         `Total: R$ ${totalComanda.toFixed(2)}`;
 }
 
-// SALVAR
+// SALVA NA PLANILHA
 async function salvar(comanda, produto, quantidade, valor) {
 
-    try {
+    await fetch(API_URL, {
 
-        await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                comanda,
-                produto,
-                quantidade,
-                valor
-            })
-        });
+        method: "POST",
 
-    } catch (erro) {
-
-        console.error(erro);
-
-        alert("Erro ao salvar.");
-    }
+        body: JSON.stringify({
+            comanda,
+            produto,
+            quantidade,
+            valor
+        })
+    });
 }
 
-// PRATO POR QUILO
+// PRATO POR QUILO (VALOR DIRETO)
 async function adicionarPrato() {
 
     const comanda =
         document.getElementById("comanda").value;
 
-    const peso =
-        Number(document.getElementById("peso").value);
+    const valor =
+        Number(
+            document.getElementById("valorPrato").value
+        );
 
-    const precoKg =
-        Number(document.getElementById("precoKg").value);
+    if (!valor) {
 
-    if (!peso) {
-
-        alert("Informe o peso.");
+        alert("Informe o valor do prato.");
 
         return;
     }
 
-    const valor =
-        peso * precoKg;
-
-    const descricao =
-        `Prato ${peso.toFixed(3)}kg`;
-
     await salvar(
         comanda,
-        descricao,
-        peso,
+        "Prato por Quilo",
+        1,
         valor
     );
 
     atualizarTela(
-        descricao,
+        "Prato por Quilo",
         valor
     );
 
-    document.getElementById("peso").value = "";
+    document.getElementById(
+        "valorPrato"
+    ).value = "";
 }
 
-// PRODUTOS/BEBIDAS
+// BEBIDAS
 async function adicionarBebida() {
 
     const comanda =
@@ -175,7 +157,7 @@ async function adicionarBebida() {
 
     if (!produtoSelecionado) {
 
-        alert("Nenhum produto carregado.");
+        alert("Selecione um produto.");
 
         return;
     }
@@ -186,11 +168,11 @@ async function adicionarBebida() {
     const produto =
         partes[0];
 
-    const precoUnitario =
+    const preco =
         Number(partes[1]);
 
     const valor =
-        precoUnitario * quantidade;
+        preco * quantidade;
 
     await salvar(
         comanda,
