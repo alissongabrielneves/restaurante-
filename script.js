@@ -50,6 +50,7 @@ window.onload = function () {
 
             select.appendChild(option);
         }
+        carregarProdutos();
     }
 };
 
