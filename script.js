@@ -1,63 +1,86 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxfTKdfrzOyGyFslvjqbKzmxkqmbpkw1Ym65P4RIgN19Gq7RMZPTHvLBjE7u_n9CYir/exec";
 
-async function carregarProdutos() {
-
-    const resposta =
-        await fetch(`${API_URL}?acao=produtos`);
-
-    const produtos =
-        await resposta.json();
-
-    const select =
-        document.getElementById("bebida");
-
-    select.innerHTML = "";
-
-    produtos.forEach(produto => {
-
-        if(produto.produto === "Produto") return;
-
-        const option =
-            document.createElement("option");
-
-        option.value =
-            `${produto.produto}|${produto.preco}`;
-
-        option.textContent =
-            `${produto.produto} - R$ ${produto.preco}`;
-
-        select.appendChild(option);
-    });
-}
-
 let totalComanda = 0;
 
-// Carrega as comandas
+// CARREGA COMANDAS E PRODUTOS
 window.onload = function () {
+
+    carregarComandas();
+
+    carregarProdutos();
+};
+
+// COMANDAS 001 A 020
+function carregarComandas() {
 
     const select = document.getElementById("comanda");
 
-    if (select) {
+    if (!select) return;
+
+    select.innerHTML = "";
+
+    for (let i = 1; i <= 20; i++) {
+
+        const option = document.createElement("option");
+
+        option.value = String(i).padStart(3, "0");
+        option.textContent = String(i).padStart(3, "0");
+
+        select.appendChild(option);
+    }
+}
+
+// PRODUTOS DA PLANILHA
+async function carregarProdutos() {
+
+    try {
+
+        const resposta =
+            await fetch(`${API_URL}?acao=produtos`);
+
+        const produtos =
+            await resposta.json();
+
+        const select =
+            document.getElementById("bebida");
+
+        if (!select) return;
 
         select.innerHTML = "";
 
-        for (let i = 1; i <= 20; i++) {
+        produtos.forEach(produto => {
 
-            const option = document.createElement("option");
+            // ignora cabeçalho
+            if (
+                produto.produto === "Produto" ||
+                !produto.produto
+            ) return;
 
-            option.value = String(i).padStart(3, "0");
-            option.textContent = String(i).padStart(3, "0");
+            const option =
+                document.createElement("option");
+
+            option.value =
+                `${produto.produto}|${produto.preco}`;
+
+            option.textContent =
+                `${produto.produto} - R$ ${produto.preco}`;
 
             select.appendChild(option);
-        }
-        carregarProdutos();
-    }
-};
+        });
 
-// Atualiza lista na tela
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert("Erro ao carregar produtos.");
+    }
+}
+
+// ATUALIZA TELA
 function atualizarTela(produto, valor) {
 
-    const itens = document.getElementById("itens");
+    const itens =
+        document.getElementById("itens");
 
     itens.innerHTML += `
         <div class="item">
@@ -71,7 +94,7 @@ function atualizarTela(produto, valor) {
         `Total: R$ ${totalComanda.toFixed(2)}`;
 }
 
-// Salva na planilha
+// SALVAR
 async function salvar(comanda, produto, quantidade, valor) {
 
     try {
@@ -94,7 +117,7 @@ async function salvar(comanda, produto, quantidade, valor) {
     }
 }
 
-// Adicionar prato por quilo
+// PRATO POR QUILO
 async function adicionarPrato() {
 
     const comanda =
@@ -113,7 +136,8 @@ async function adicionarPrato() {
         return;
     }
 
-    const valor = peso * precoKg;
+    const valor =
+        peso * precoKg;
 
     const descricao =
         `Prato ${peso.toFixed(3)}kg`;
@@ -133,13 +157,13 @@ async function adicionarPrato() {
     document.getElementById("peso").value = "";
 }
 
-// Adicionar bebida
+// PRODUTOS/BEBIDAS
 async function adicionarBebida() {
 
     const comanda =
         document.getElementById("comanda").value;
 
-    const bebida =
+    const produtoSelecionado =
         document.getElementById("bebida").value;
 
     const quantidade =
@@ -149,16 +173,18 @@ async function adicionarBebida() {
             ).value
         );
 
-    if (quantidade < 1) {
+    if (!produtoSelecionado) {
 
-        alert("Quantidade inválida.");
+        alert("Nenhum produto carregado.");
 
         return;
     }
 
-    const partes = bebida.split("|");
+    const partes =
+        produtoSelecionado.split("|");
 
-    const produto = partes[0];
+    const produto =
+        partes[0];
 
     const precoUnitario =
         Number(partes[1]);
