@@ -1,5 +1,35 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxfTKdfrzOyGyFslvjqbKzmxkqmbpkw1Ym65P4RIgN19Gq7RMZPTHvLBjE7u_n9CYir/exec";
 
+async function carregarProdutos() {
+
+    const resposta =
+        await fetch(`${API_URL}?acao=produtos`);
+
+    const produtos =
+        await resposta.json();
+
+    const select =
+        document.getElementById("bebida");
+
+    select.innerHTML = "";
+
+    produtos.forEach(produto => {
+
+        if(produto.produto === "Produto") return;
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            `${produto.produto}|${produto.preco}`;
+
+        option.textContent =
+            `${produto.produto} - R$ ${produto.preco}`;
+
+        select.appendChild(option);
+    });
+}
+
 let totalComanda = 0;
 
 // Carrega as comandas
